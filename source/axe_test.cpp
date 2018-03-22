@@ -54,12 +54,22 @@ void char_test()
 	input = "ab";
 	check_rule(char_rule, input);
 
-	input = "aaaba";
+	input = "aaababa";
 	auto char_rule_closure = +char_rule;
 	auto result_pos = char_rule(input.begin(), input.end()).position;
 	std::cout << "chars consumed with char_rule: " << result_pos - input.begin() << std::endl;
 	auto closure_res = char_rule_closure(input.begin(), input.end()).position;
 	std::cout << "chars consumed with closure rule: " << closure_res - input.begin() << std::endl;
+
+	typedef decltype(input.begin()) str_it;
+	auto fail_rule = r_fail([&input](str_it begin, str_it end)
+	{
+		std::cout << "failed range: " << end - begin << std::endl;
+	});
+	auto char_with_fail = char_rule_closure | fail_rule;
+	input = "baababa";
+	auto fail_it = char_with_fail(input.begin(), input.end()).position;
+	std::cout << "failed position: " << fail_it - input.begin();
 }
 
 int main()
