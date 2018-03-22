@@ -4,4 +4,6 @@ project(math_logic_hw)
 
 include_directories(${PROJECT_SOURCE_DIR}/axe_parser)
 
-add_executable(hw1 ${PROJECT_SOURCE_DIR}/hw1.cpp})
+add_definitions(-std=c++11 -g)
+
+add_executable(hw1 ${PROJECT_SOURCE_DIR}/source/hw1.cpp)
