@@ -99,7 +99,7 @@ template <typename Rule>
 void check_expr(Rule rule, std::string input)
 {
 	auto match_result = rule(input.begin(), input.end());
-	if (match_result.matched && match_result.position == input.end())
+	if (match_result.matched)
 	{
 		std::cout << "\"" << input << "\" is an arithmetic expression" << std::endl;
 	}
@@ -118,15 +118,16 @@ void arithmetic_parser()
 	auto multiplication = r_many(unary_expr, mulOperations);
 	auto addOperations = r_any("+-");
 	auto addition = r_many(multiplication, addOperations);
+	auto expression = addition & r_end();
 
 	std::cout << "testing arithmetic expressions: " << std::endl;
-	check_expr(addition, "a");
-	check_expr(addition, "a*b");
-	check_expr(addition, "abacaba");
-	check_expr(addition, "a*b+c");
-	check_expr(addition, "a-b+c-b*255");
-	check_expr(addition, "");
-	check_expr(addition, "a*d");
+	check_expr(expression, "a");
+	check_expr(expression, "a*b");
+	check_expr(expression, "abacaba");
+	check_expr(expression, "a*b+c");
+	check_expr(expression, "a-b+c-b*255");
+	check_expr(expression, "");
+	check_expr(expression, "a*d");
 }
 
 int main()
