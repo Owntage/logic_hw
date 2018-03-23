@@ -117,10 +117,10 @@ ExprTree* generateTree(std::string input)
 
 
 	auto operand_tree_rule = *operand_rule >> e_ref([&operandTrees](str_it begin, str_it end)
-													{
-														std::string matched_str(begin, end);
-														operandTrees.push_back(generateTree<offset + 1 < std::tuple_size<decltype(operationRules)>::value ? offset + 1 : 0>(matched_str));
-													});
+	{
+		std::string matched_str(begin, end);
+		operandTrees.push_back(generateTree<offset + 1 < std::tuple_size<decltype(operationRules)>::value ? offset + 1 : 0>(matched_str));
+	});
 
 	std::vector<std::string> operators;
 
