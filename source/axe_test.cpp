@@ -7,6 +7,8 @@
 
 using namespace axe;
 
+typedef std::string::iterator str_it;
+
 //example from the pdf reference
 void extractor_test1()
 {
@@ -61,7 +63,6 @@ void char_test()
 	auto closure_res = char_rule_closure(input.begin(), input.end()).position;
 	std::cout << "chars consumed with closure rule: " << closure_res - input.begin() << std::endl;
 
-	typedef decltype(input.begin()) str_it;
 	auto fail_rule = r_fail([&input](str_it begin, str_it end)
 	{
 		std::cout << "failed range: " << end - begin << std::endl;
@@ -76,10 +77,22 @@ void extractor_test2()
 {
 	std::cout << "extractor test 2: " << std::endl;
 	std::string matched_string;
-	auto rule = +r_char('a') >> matched_string;
-	std::string input = "aaaabbbb";
-	rule(input.begin(), input.end());
-	std::cout << "matched string: " << matched_string;
+	auto rule = +r_char('a');
+	auto rule_with_extractor = rule >> matched_string;
+	std::string input = "aaaabbbbaaabba";
+	rule_with_extractor(input.begin(), input.end());
+	std::cout << "matched string: " << matched_string << std::endl << "applying rule with lambda: " << std::endl;
+
+	auto rule_with_callback = rule >> e_ref([](str_it begin, str_it end)
+	{
+		std::string matched_str(begin, end);
+		std::cout << "matched string: " << matched_str << std::endl;
+	});
+	rule_with_callback(input.begin(), input.end());
+
+	std::cout << "applying skip rule" << std::endl;
+	auto skip_rule = +(rule_with_callback | r_char('b'));
+	skip_rule(input.begin(), input.end());
 }
 
 int main()
