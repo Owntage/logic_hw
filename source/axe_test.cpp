@@ -8,9 +8,9 @@
 using namespace axe;
 
 //example from the pdf reference
-void extractor_test()
+void extractor_test1()
 {
-	std::cout << "extractor test: " << std::endl;
+	std::cout << "extractor test 1: " << std::endl;
 	std::string input = "an_identifier";
 	std::string name;
 	size_t length(0);
@@ -72,10 +72,20 @@ void char_test()
 	std::cout << "failed position: " << fail_it - input.begin();
 }
 
+void extractor_test2()
+{
+	std::cout << "extractor test 2: " << std::endl;
+	std::string matched_string;
+	auto rule = +r_char('a') >> matched_string;
+	std::string input = "aaaabbbb";
+	rule(input.begin(), input.end());
+	std::cout << "matched string: " << matched_string;
+}
+
 int main()
 {
-	extractor_test();
-	char_test();
-
+	//extractor_test1();
+	//char_test();
+	extractor_test2();
 	return 0;
 }
