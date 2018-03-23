@@ -95,10 +95,45 @@ void extractor_test2()
 	skip_rule(input.begin(), input.end());
 }
 
+template <typename Rule>
+void check_expr(Rule rule, std::string input)
+{
+	auto match_result = rule(input.begin(), input.end());
+	if (match_result.matched && match_result.position == input.end())
+	{
+		std::cout << "\"" << input << "\" is an arithmetic expression" << std::endl;
+	}
+	else
+	{
+		std::cout << "\"" << input << "\" is NOT an arithmetic expression" << std::endl;
+	}
+}
+
+void arithmetic_parser()
+{
+	auto variable = r_any("abc");
+	auto constant = r_numstr();
+	auto unary_expr = variable | constant;
+	auto mulOperations = r_char('*');
+	auto multiplication = r_many(unary_expr, mulOperations);
+	auto addOperations = r_any("+-");
+	auto addition = r_many(multiplication, addOperations);
+
+	std::cout << "testing arithmetic expressions: " << std::endl;
+	check_expr(addition, "a");
+	check_expr(addition, "a*b");
+	check_expr(addition, "abacaba");
+	check_expr(addition, "a*b+c");
+	check_expr(addition, "a-b+c-b*255");
+	check_expr(addition, "");
+	check_expr(addition, "a*d");
+}
+
 int main()
 {
 	//extractor_test1();
 	//char_test();
-	extractor_test2();
+	//extractor_test2();
+	arithmetic_parser();
 	return 0;
 }
