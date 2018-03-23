@@ -10,6 +10,23 @@ using namespace axe;
 
 typedef std::string::iterator str_it;
 
+bool ExprTree::operator==(const ExprTree& other)
+{
+	if (this->value != other.value) return false;
+	if ((this->left == nullptr) != (other.left == nullptr)) return false;
+	if ((this->right == nullptr) != (other.right == nullptr)) return false;
+
+	bool result = true;
+	if (this->left != nullptr)
+	{
+		result = *this->left == *other.left;
+	}
+	if (this->right != nullptr)
+	{
+		result = result && *this->right == *other.right;
+	}
+	return result;
+}
 
 template<typename BaseRule, typename OpRule>
 ExprTree* generateTree(std::string input, const BaseRule& baseRule, std::vector<OpRule> operationRules, int offset = 0);

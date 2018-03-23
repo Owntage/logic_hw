@@ -23,6 +23,8 @@ struct ExprTree
 			right(right)
 	{}
 
+	bool operator==(const ExprTree& other);
+
 	template<typename Stream>
 	friend Stream& operator<<(Stream& s, ExprTree& tree)
 	{
