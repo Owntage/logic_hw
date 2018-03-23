@@ -176,14 +176,14 @@ ExprTree* generateBaseLevelTree(std::string input, BaseRule baseRule, OpRule ope
 };
 
 template<typename BaseRule, typename OpRule>
-ExprTree* generateTree(std::string input, BaseRule baseRule, std::vector<OpRule> operationRules)
+ExprTree* generateTree(std::string input, BaseRule baseRule, std::vector<OpRule> operationRules, int offset = 0)
 {
 	std::cout << "generating tree" << std::endl;
-	if (operationRules.size() == 0)
+	if (operationRules.size() - offset == 0)
 	{
 		return new ExprTree(input);
 	}
-	if (operationRules.size() == 1)
+	if (operationRules.size() - offset == 1)
 	{
 		return generateBaseLevelTree(input, baseRule, operationRules[0]);
 	}
@@ -191,24 +191,22 @@ ExprTree* generateTree(std::string input, BaseRule baseRule, std::vector<OpRule>
 	r_rule<str_it> operand_rule;
 	operand_rule = r_many(baseRule, operationRules[0]);
 
-	for (int i = 1; i < operationRules.size() - 1; i++)
+	for (int i = 1; i < operationRules.size() - 1 - offset; i++)
 	{
 		operand_rule = r_many(operand_rule, operationRules[i]);
 	}
 	std::vector<ExprTree*> operandTrees;
-	std::vector<OpRule> nextOperationRules = operationRules;
-	nextOperationRules.pop_back();
 
 
-	auto operand_tree_rule = *operand_rule >> e_ref([&operandTrees, &nextOperationRules, baseRule](str_it begin, str_it end)
+	auto operand_tree_rule = *operand_rule >> e_ref([&operandTrees, &operationRules, baseRule, offset](str_it begin, str_it end)
 	{
 		std::string matched_str(begin, end);
-		operandTrees.push_back(generateTree(matched_str, baseRule, nextOperationRules));
+		operandTrees.push_back(generateTree(matched_str, baseRule, operationRules, offset + 1));
 	});
 
 	std::vector<std::string> operators;
 
-	auto op_with_extract = operationRules.back() >> e_push_back(operators);
+	auto op_with_extract = operationRules[operationRules.size() - 1 - offset] >> e_push_back(operators);
 	auto expr_rule = r_many(operand_tree_rule, op_with_extract);
 
 	expr_rule(input.begin(), input.end());
