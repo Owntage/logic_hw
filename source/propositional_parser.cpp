@@ -135,8 +135,8 @@ namespace PropositionalParser
 		static auto variable = r_any("abc");
 		static auto constant = r_numstr();
 		static r_rule<str_it> unary_expr;
-		static auto mulOperations = r_any("*");
-		static auto addOperations = r_any("+");
+		static auto mulOperations = r_any("&");
+		static auto addOperations = r_any("|");
 
 		static auto multiplication = r_many(unary_expr, mulOperations);
 		static auto addition = r_many(multiplication, addOperations);

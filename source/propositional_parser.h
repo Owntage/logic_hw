@@ -5,6 +5,8 @@
 #ifndef MATH_LOGIC_HW_PROPOSITIONAL_PARSER_H
 #define MATH_LOGIC_HW_PROPOSITIONAL_PARSER_H
 
+#include <string>
+
 struct ExprTree
 {
 	std::string value;
