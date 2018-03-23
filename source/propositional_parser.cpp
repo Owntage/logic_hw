@@ -10,19 +10,30 @@ using namespace axe;
 
 typedef std::string::iterator str_it;
 
+
 template<typename BaseRule, typename OpRule>
-ExprTree* generateBaseLevelTree(std::string input, BaseRule baseRule, OpRule operationRule)
+ExprTree* generateTree(std::string input, const BaseRule& baseRule, std::vector<OpRule> operationRules, int offset = 0);
+
+template<typename BaseRule, typename OpRule>
+ExprTree* generateBaseLevelTree(std::string input, const BaseRule& baseRule, std::vector<OpRule> operationRules)
 {
 	std::vector<std::string> operands;
 	std::vector<std::string> operations;
 	auto operandRule = baseRule >> e_push_back(operands);
-	auto operationExtractorRule = operationRule >> e_push_back(operations);
+	auto operationExtractorRule = operationRules[0] >> e_push_back(operations);
 	auto exprRule = r_many(operandRule, operationExtractorRule);
 	exprRule(input.begin(), input.end());
 	std::vector<ExprTree*> resultTrees;
 	for(int i = 0; i < operands.size(); i++)
 	{
-		resultTrees.push_back(new ExprTree(operands[i]));
+		if (operands[i][0] == '(')
+		{
+			resultTrees.push_back(generateTree(input.substr(1, input.size() - 1), baseRule, operationRules));
+		}
+		else
+		{
+			resultTrees.push_back(new ExprTree(operands[i]));
+		}
 		if (i != operands.size() - 1)
 		{
 			resultTrees.push_back(new ExprTree(operations[i]));
@@ -46,7 +57,7 @@ ExprTree* generateBaseLevelTree(std::string input, BaseRule baseRule, OpRule ope
 };
 
 template<typename BaseRule, typename OpRule>
-ExprTree* generateTree(std::string input, BaseRule baseRule, std::vector<OpRule> operationRules, int offset = 0)
+ExprTree* generateTree(std::string input, const BaseRule& baseRule, std::vector<OpRule> operationRules, int offset = 0)
 {
 	if (operationRules.size() - offset == 0)
 	{
@@ -54,8 +65,9 @@ ExprTree* generateTree(std::string input, BaseRule baseRule, std::vector<OpRule>
 	}
 	if (operationRules.size() - offset == 1)
 	{
-		return generateBaseLevelTree(input, baseRule, operationRules[0]);
+		return generateBaseLevelTree(input, baseRule, operationRules);
 	}
+
 
 	r_rule<str_it> operand_rule;
 	operand_rule = r_many(baseRule, operationRules[0]);
@@ -67,7 +79,7 @@ ExprTree* generateTree(std::string input, BaseRule baseRule, std::vector<OpRule>
 	std::vector<ExprTree*> operandTrees;
 
 
-	auto operand_tree_rule = *operand_rule >> e_ref([&operandTrees, &operationRules, baseRule, offset](str_it begin, str_it end)
+	auto operand_tree_rule = *operand_rule >> e_ref([&operandTrees, &operationRules, &baseRule, offset](str_it begin, str_it end)
 													{
 														std::string matched_str(begin, end);
 														operandTrees.push_back(generateTree(matched_str, baseRule, operationRules, offset + 1));
@@ -105,10 +117,14 @@ namespace PropositionalParser
 	{
 		static auto variable = r_any("abc");
 		static auto constant = r_numstr();
-		static auto unary_expr = variable | constant;
-		static auto mulOperations = r_any("&");
-		static auto addOperations = r_any("|");
+		static r_rule<str_it> unary_expr;
+		static auto mulOperations = r_any("*");
+		static auto addOperations = r_any("+");
 
-		return generateTree<decltype(unary_expr), decltype(mulOperations)>(expr, unary_expr, {mulOperations, addOperations});
+		static auto multiplication = r_many(unary_expr, mulOperations);
+		static auto addition = r_many(multiplication, addOperations);
+		unary_expr = variable | constant | ("(" & addition & ")");
+
+		return generateTree<decltype(unary_expr), decltype(mulOperations)>(expr, unary_expr, {mulOperations, addOperations}, 0);
 	}
 }

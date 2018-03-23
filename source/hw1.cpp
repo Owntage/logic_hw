@@ -3,10 +3,13 @@
 //
 
 #include <iostream>
+#include "propositional_parser.h"
+
 using namespace std;
 
 int main()
 {
-	cout << "hello world" << endl;
+	ExprTree* result = PropositionalParser::parse("((a+b)*a)*c");
+	cout << "parsed expression: " << *result << ". " << endl;
 	return 0;
 }
