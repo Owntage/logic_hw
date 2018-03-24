@@ -29,8 +29,7 @@ bool ExprTree::operator==(const ExprTree& other)
 	return result;
 }
 
-auto variable = r_any("abc");
-auto constant = r_numstr();
+auto variable = r_any('A', 'Z') & *(r_any('A', 'Z') | r_num());
 r_rule<str_it> unary_expr;
 auto mulOperations = r_str("&");
 auto addOperations = r_str("|");
@@ -52,7 +51,7 @@ auto expressionRules = std::make_tuple(addition, multiplication);
 
 void initUnaryExpr()
 {
-	unary_expr = ~(r_char('!')) & variable | constant | ("(" & implication & ")");
+	unary_expr = ~(r_char('!')) & variable | ("(" & implication & ")");
 }
 
 

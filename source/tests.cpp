@@ -7,8 +7,8 @@
 
 bool compareExpressionTrees()
 {
-	std::string expr("a|b&c");
-	std::string anotherExpr("a|a|a");
+	std::string expr("A|B&C");
+	std::string anotherExpr("A|A|A");
 	ExprTree* exprTree1 = PropositionalParser::parse(expr);
 	ExprTree* exprTree2 = PropositionalParser::parse(expr);
 	ExprTree* exprTree3 = PropositionalParser::parse(anotherExpr);
@@ -21,8 +21,8 @@ bool compareExpressionTrees()
 
 bool checkGeneratedTree()
 {
-	ExprTree* tree1 = new ExprTree("|", new ExprTree("&", new ExprTree("a"), new ExprTree("b")), new ExprTree("c"));
-	ExprTree* tree2 = PropositionalParser::parse("a&b|c");
+	ExprTree* tree1 = new ExprTree("|", new ExprTree("&", new ExprTree("A"), new ExprTree("B")), new ExprTree("C"));
+	ExprTree* tree2 = PropositionalParser::parse("A&B|C");
 	if (!(*tree1 == *tree2))
 	{
 		std::cout << "extected: " << *tree1 << std::endl;
@@ -38,7 +38,7 @@ int main()
 {
 	if (!compareExpressionTrees()) return 1;
 	if (!checkGeneratedTree()) return 1;
-	std::cout << *PropositionalParser::parse("a->b->c") << std::endl;
-	std::cout << *PropositionalParser::parse("!a|!b|!c") << std::endl;
+	std::cout << *PropositionalParser::parse("A->B->C") << std::endl;
+	std::cout << *PropositionalParser::parse("!A|!B|!C") << std::endl;
 	return 0;
 }
