@@ -51,7 +51,7 @@ auto expressionRules = std::make_tuple(addition, multiplication);
 
 void initUnaryExpr()
 {
-	unary_expr = ~(r_char('!')) & variable | ("(" & implication & ")");
+	unary_expr = *(r_char('!')) & variable | ("(" & implication & ")");
 }
 
 
