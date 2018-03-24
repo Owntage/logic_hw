@@ -6,6 +6,7 @@
 #include <vector>
 #include <fstream>
 #include "propositional_parser.h"
+#include "propositional_proof.h"
 #include <axe.h>
 
 using namespace std;
@@ -59,6 +60,14 @@ int main()
 	printVector(assumptions);
 	std::cout << "extracted proof: " << std::endl;
 	printVector(proofExpressions);
+
+	PropositionalProofChecker proofChecker(assumptions, proofExpressions);
+
+	ofstream output_f("output.txt");
+	for (int i = 0; i < proofChecker.result.size(); i++)
+	{
+		output_f << proofChecker.result[i] << std::endl;
+	}
 
 	return 0;
 }
