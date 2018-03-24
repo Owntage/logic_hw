@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "propositional_parser.h"
+#include "propositional_proof.h"
 
 bool compareExpressionTrees()
 {
@@ -34,11 +35,34 @@ bool checkGeneratedTree()
 	return true;
 }
 
+template<typename T>
+void printVector(std::vector<T> vector)
+{
+	for(int i = 0; i < vector.size(); i++)
+	{
+		std::cout << vector[i] << std::endl;
+	}
+}
+
 int main()
 {
 	if (!compareExpressionTrees()) return 1;
 	if (!checkGeneratedTree()) return 1;
-	std::cout << *PropositionalParser::parse("A->B->C") << std::endl;
-	std::cout << *PropositionalParser::parse("!A|!B|!C") << std::endl;
+
+	PropositionalProofChecker proofChecker(
+			{
+					"A",
+					"A->B"
+			},
+			{
+					"A->B",
+					"A",
+					"B"
+			});
+	std::cout << "proof size: " << proofChecker.result.size() << std::endl;
+	std::cout << "proof check: " << std::endl;
+	printVector(proofChecker.result);
+	std::cout << "proof finished" << std::endl;
+
 	return 0;
 }
