@@ -66,7 +66,7 @@ int main()
 	ofstream output_f("output.txt");
 	for (int i = 0; i < proofChecker.result.size(); i++)
 	{
-		output_f << proofChecker.result[i] << std::endl;
+		output_f << "(" << i+1 << ") " << proofExpressions[i] << " (" << proofChecker.result[i] << ")" << std::endl;
 	}
 
 	return 0;
