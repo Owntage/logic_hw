@@ -8,8 +8,6 @@
 
 using namespace std;
 
-vector<ExprTree*> assumptions;
-
 bool checkAxiom1(ExprTree* expr)
 {
 	if (expr->value != "->") return false;
