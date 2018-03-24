@@ -35,6 +35,10 @@ struct ExprTree
 		{
 			s << "(" << *tree.left << ", " << *tree.right << ")";
 		}
+		else if (tree.left != nullptr)
+		{
+			s << "(" << *tree.left << ")";
+		}
 		return s;
 	}
 };

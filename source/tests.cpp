@@ -39,6 +39,6 @@ int main()
 	if (!compareExpressionTrees()) return 1;
 	if (!checkGeneratedTree()) return 1;
 	std::cout << *PropositionalParser::parse("a->b->c") << std::endl;
-	std::cout << *PropositionalParser::parse("a|b|c") << std::endl;
+	std::cout << *PropositionalParser::parse("!a|!b|!c") << std::endl;
 	return 0;
 }

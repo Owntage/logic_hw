@@ -52,7 +52,7 @@ auto expressionRules = std::make_tuple(addition, multiplication);
 
 void initUnaryExpr()
 {
-	unary_expr = variable | constant | ("(" & implication & ")");
+	unary_expr = ~(r_char('!')) & variable | constant | ("(" & implication & ")");
 }
 
 
@@ -77,7 +77,14 @@ ExprTree* generateBaseLevelTree(std::string input)
 		}
 		else
 		{
-			resultTrees.push_back(new ExprTree(operands[i]));
+			if (operands[i][0] == '!')
+			{
+				resultTrees.push_back(new ExprTree("!", generateTree<0>(input.substr(1)), nullptr));
+			}
+			else
+			{
+				resultTrees.push_back(new ExprTree(operands[i]));
+			}
 		}
 		if (i != operands.size() - 1)
 		{
