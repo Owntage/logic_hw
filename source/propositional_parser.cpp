@@ -4,6 +4,7 @@
 
 #include<axe.h>
 #include<stack>
+#include <c++/iostream>
 #include "propositional_parser.h"
 
 using namespace axe;
@@ -31,17 +32,27 @@ bool ExprTree::operator==(const ExprTree& other)
 auto variable = r_any("abc");
 auto constant = r_numstr();
 r_rule<str_it> unary_expr;
-auto mulOperations = r_any("&");
-auto addOperations = r_any("|");
+auto mulOperations = r_str("&");
+auto addOperations = r_str("|");
+auto implOperations = r_str("->");
 
 auto multiplication = r_many(unary_expr, mulOperations);
 auto addition = r_many(multiplication, addOperations);
+auto implication = r_many(addition, implOperations);
 
-auto operationRules = std::make_tuple(mulOperations, addOperations);
+enum class Associativity
+{
+	Left,
+	Right
+};
+
+auto operationRules = std::make_tuple(mulOperations, addOperations, implOperations);
+auto associativity = std::make_tuple(Associativity::Right, Associativity::Left, Associativity::Left);
+auto expressionRules = std::make_tuple(addition, multiplication);
 
 void initUnaryExpr()
 {
-	unary_expr = variable | constant | ("(" & addition & ")");
+	unary_expr = variable | constant | ("(" & implication & ")");
 }
 
 
@@ -102,17 +113,7 @@ ExprTree* generateTree(std::string input)
 		return generateBaseLevelTree(input);
 	}
 
-
-	r_rule<str_it> operand_rule;
-	//todo: rewrite!
-
-	operand_rule = r_many(unary_expr, std::get<0>(operationRules));
-	/*
-	for (int i = 1; i < operationRules.size() - 1 - offset; i++)
-	{
-		operand_rule = r_many(operand_rule, operationRules[i]);
-	}
-	 */
+	auto operand_rule = std::get<offset < std::tuple_size<decltype(expressionRules)>::value ? offset : 0>(expressionRules);
 	std::vector<ExprTree*> operandTrees;
 
 
@@ -132,7 +133,15 @@ ExprTree* generateTree(std::string input)
 	std::stack<ExprTree*> trees;
 	for (int i = 0; i < operandTrees.size(); i++)
 	{
-		trees.push(operandTrees[operandTrees.size() - 1 - i]);
+		if (std::get<offset>(associativity) == Associativity::Left)
+		{
+			trees.push(operandTrees[operandTrees.size() - 1 - i]);
+		}
+		else
+		{
+			trees.push(operandTrees[i]);
+		}
+
 	}
 
 	int operatorIndex = 0;
@@ -142,6 +151,10 @@ ExprTree* generateTree(std::string input)
 		trees.pop();
 		ExprTree* second = trees.top();
 		trees.pop();
+		if (std::get<offset>(associativity) == Associativity::Right)
+		{
+			std::swap(first, second);
+		}
 		ExprTree* newTree = new ExprTree(operators[operatorIndex++], first, second);
 		trees.push(newTree);
 	}
