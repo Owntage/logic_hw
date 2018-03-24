@@ -23,6 +23,11 @@ bool notImpl(ExprTree* expr)
 	return expr->value != "->";
 }
 
+bool notAnd(ExprTree* expr)
+{
+	return expr->value != "&";
+}
+
 bool notEq(ExprTree* first, ExprTree* second)
 {
 	return !(*first == *second);
@@ -50,6 +55,11 @@ bool checkAxiom2(ExprTree* impl1)
 	if (notEq(impl6->left, expr2)) return false;
 	if (notEq(impl5->left, expr1)) return false;
 	return !notEq(impl5->right, expr3);
+}
+
+bool checkAxiom3(ExprTree* impl1)
+{
+	
 }
 
 int main()
