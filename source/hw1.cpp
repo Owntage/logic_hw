@@ -25,9 +25,14 @@ void printVector(std::vector<T> vector)
 
 int main()
 {
-	std::cout << "enter filename: ";
+	std::cout << "enter input filename: " << endl;
 	std::string filename;
 	std::cin >> filename;
+
+	std::cout << "enter output filename: " << endl;
+	std::string output_filename;
+	std::cin >> output_filename;
+
 	ifstream input_f(filename);
 
 	std::string input((std::istreambuf_iterator<char>(input_f)),
@@ -63,7 +68,7 @@ int main()
 
 	PropositionalProofChecker proofChecker(assumptions, proofExpressions);
 
-	ofstream output_f("output.txt");
+	ofstream output_f(output_filename);
 	for (int i = 0; i < proofChecker.result.size(); i++)
 	{
 		output_f << "(" << i+1 << ") " << proofExpressions[i] << " (" << proofChecker.result[i] << ")" << std::endl;
