@@ -213,7 +213,9 @@ PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> as
 		int axiom = getAxiom(exprTrees[i]);
 		if (axiom != -1)
 		{
-			result[i] = "axiom " + std::to_string(axiom);
+			//result[i] = "axiom " + std::to_string(axiom);
+			result[i][EXPR_TYPE_KEY] = EXPR_AXIOM;
+			result[i][EXPR_AXIOM_KEY] = axiom;
 			continue;
 		}
 
@@ -239,7 +241,10 @@ PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> as
 
 		if (mpFound)
 		{
-			result[i] = "M.P. " + std::to_string(mpI + 1) + " " + std::to_string(mpJ + 1);
+			//result[i] = "M.P. " + std::to_string(mpI + 1) + " " + std::to_string(mpJ + 1);
+			result[i][EXPR_TYPE_KEY] = EXPR_MP;
+			result[i][EXPR_MP_FIRST] = mpI + 1;
+			result[i][EXPR_MP_SECOND] = mpJ + 1;
 			continue;
 		}
 
@@ -248,12 +253,15 @@ PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> as
 		{
 			if (*exprTrees[i] == *assumpExpressions[j])
 			{
-				result[i] = "assumption " + std::to_string(j+1);
+				//result[i] = "assumption " + std::to_string(j+1);
+				result[i][EXPR_TYPE_KEY] = EXPR_ASSUMPTION;
+				result[i][EXPR_ASSUMPTION_KEY] = j+1;
 				isAssumption = true;
 			}
 		}
 		if (isAssumption) continue;
 
-		result[i] = "not prooved";
+		//result[i] = "not prooved";
+		result[i][EXPR_TYPE_KEY] = EXPR_NOT_PROVED;
 	}
 }

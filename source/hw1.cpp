@@ -71,7 +71,32 @@ int main()
 	ofstream output_f(output_filename);
 	for (int i = 0; i < proofChecker.result.size(); i++)
 	{
-		output_f << "(" << i+1 << ") " << proofExpressions[i] << " (" << proofChecker.result[i] << ")" << std::endl;
+		std::string exprResult;
+		auto resMap = proofChecker.result[i];
+		switch (resMap[EXPR_TYPE_KEY])
+		{
+			case EXPR_AXIOM:
+			{
+				exprResult += u8"Сх. акс. " + to_string(resMap[EXPR_AXIOM_KEY]);
+				break;
+			}
+			case EXPR_ASSUMPTION:
+			{
+				exprResult += u8"Предп. " + to_string(resMap[EXPR_ASSUMPTION_KEY]);
+				break;
+			}
+			case EXPR_MP:
+			{
+				exprResult += u8"M.P. " + to_string(resMap[EXPR_MP_FIRST]) + " " + to_string(resMap[EXPR_MP_SECOND]);
+				break;
+			}
+			case EXPR_NOT_PROVED:
+			{
+				exprResult += u8"Не доказано";
+				break;
+			}
+		}
+		output_f << "(" << i+1 << ") " << proofExpressions[i] << " (" << exprResult << ")" << (char) 0xA;
 	}
 
 	return 0;
