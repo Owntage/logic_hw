@@ -27,11 +27,9 @@ void parsePropositionalInput(
 
 	unary_expr = *(r_char('!')) & variable | ("(" & implication & ")");
 
-
-
 	auto assumptionExpr = implication >> e_push_back(assumptions);
 	auto proofExpr = implication >> e_push_back(proofExpressions);
-	auto header = ~(assumptionExpr & *("," & assumptionExpr)) & r_str("|-") & implication;
+	auto header = ~(assumptionExpr & *("," & assumptionExpr)) & r_str("|-") & (implication >> targetExpr);
 	auto proof = *(proofExpr & "\n");
 	auto inputGrammar = header & "\n" & proof;
 
