@@ -31,10 +31,15 @@ int main()
 	std::string output_filename;
 	std::cin >> output_filename;
 
+	std::string input;
 	ifstream input_f(filename);
-
-	std::string input((std::istreambuf_iterator<char>(input_f)),
-					std::istreambuf_iterator<char>());
+	if (input_f)
+	{
+		while (!input_f.eof())
+		{
+			input.push_back(input_f.get());
+		}
+	}
 
 	std::vector<string> assumptions;
 	std::vector<string> proofExpressions;
