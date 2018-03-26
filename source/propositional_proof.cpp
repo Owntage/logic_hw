@@ -207,10 +207,10 @@ struct Memorization
 		stringstream s;
 		s << *exprTrees[i];
 		string exprStr = s.str();
-		if (memorization.find(exprStr) != memorization.end())
-		{
-			return memorization[exprStr];
-		}
+		//if (memorization.find(exprStr) != memorization.end())
+		//{
+		//	return memorization[exprStr];
+		//}
 		bool mpFound = false;
 		int mpI = -1;
 		int mpJ = -1;
@@ -265,6 +265,7 @@ PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> as
 		if (i % 500 == 0)
 		{
 			std::cout << "progress: " << ((float) i) / ((float) exprTrees.size()) << std::endl;
+			std::cout.flush();
 		}
 
 		int axiom = getAxiom(exprTrees[i]);
