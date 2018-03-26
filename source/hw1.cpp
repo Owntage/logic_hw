@@ -47,10 +47,6 @@ int main()
 
 	parsePropositionalInput(input, assumptions, proofExpressions, targetExpr);
 
-	std::cout << "extracted assumptions: " << std::endl;
-	printVector(assumptions);
-	std::cout << "extracted proof: " << std::endl;
-	printVector(proofExpressions);
 
 	PropositionalProofChecker proofChecker(assumptions, proofExpressions);
 
@@ -73,7 +69,7 @@ int main()
 			}
 			case EXPR_MP:
 			{
-				exprResult += u8"M.P. " + to_string(resMap[EXPR_MP_FIRST]) + " " + to_string(resMap[EXPR_MP_SECOND]);
+				exprResult += u8"M.P. " + to_string(resMap[EXPR_MP_FIRST]) + ", " + to_string(resMap[EXPR_MP_SECOND]);
 				break;
 			}
 			case EXPR_NOT_PROVED:

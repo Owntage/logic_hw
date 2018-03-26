@@ -5,7 +5,7 @@
 #include "propositional_parser.h"
 #include "propositional_proof.h"
 #include <vector>
-#include <c++/iostream>
+#include <iostream>
 
 bool checkAxiom1(ExprTree* expr)
 {
@@ -210,6 +210,11 @@ PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> as
 	result.resize(expressions.size());
 	for (int i = 0; i < exprTrees.size(); i++)
 	{
+		if (i % 500 == 0)
+		{
+			std::cout << "progress: " << ((float) i) / ((float) exprTrees.size()) << std::endl;
+		}
+
 		int axiom = getAxiom(exprTrees[i]);
 		if (axiom != -1)
 		{
