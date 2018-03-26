@@ -35,34 +35,17 @@ bool checkGeneratedTree()
 	return true;
 }
 
-template<typename T>
-void printVector(std::vector<T> vector)
-{
-	for(int i = 0; i < vector.size(); i++)
-	{
-		std::cout << vector[i] << std::endl;
-	}
-}
 
 int main()
 {
 	if (!compareExpressionTrees()) return 1;
 	if (!checkGeneratedTree()) return 1;
 
-	PropositionalProofChecker proofChecker(
-			{
-					"A",
-					"A->B"
-			},
-			{
-					"A->B",
-					"A",
-					"B"
-			});
-	std::cout << "proof size: " << proofChecker.result.size() << std::endl;
-	std::cout << "proof check: " << std::endl;
-	printVector(proofChecker.result);
-	std::cout << "proof finished" << std::endl;
+	//ExprTree* tree = PropositionalParser::parse("((A->C)->C)->((A->C)->(!C))->!(A->C)");
+	//std::cout << "parsed tree: " << *tree << std::endl;
+
+	ExprTree* tree2 = PropositionalParser::parse("(((A->C)->C)->(((A->C)->(!C))->(!(A->C))))");
+	std::cout << "parsed tree: " << *tree2 << std::endl;
 
 	return 0;
 }

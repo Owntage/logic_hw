@@ -214,9 +214,9 @@ struct Memorization
 		bool mpFound = false;
 		int mpI = -1;
 		int mpJ = -1;
-		for (int j = 0; j < i; j++)
+		for (int j = i - 1; j >= 0; j--)
 		{
-			for (int k = 0; k < i; k++)
+			for (int k = i - 1; k >= 0; k--)
 			{
 				if (mpFound) break;
 				if (exprTrees[j]->value == "->")

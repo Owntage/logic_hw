@@ -49,9 +49,13 @@ auto operationRules = std::make_tuple(mulOperations, addOperations, implOperatio
 auto associativity = std::make_tuple(Associativity::Right, Associativity::Left, Associativity::Left);
 auto expressionRules = std::make_tuple(addition, multiplication);
 
+
 void initUnaryExpr()
 {
-	unary_expr = *(r_char('!')) & variable | ("(" & implication & ")");
+	static bool isInitiated = false;
+	if (isInitiated) return;
+	unary_expr = variable | ("!" & implication) | ("(" & implication & ")");
+	isInitiated = true;
 }
 
 
@@ -126,6 +130,7 @@ ExprTree* generateTree(std::string input)
 	auto operand_tree_rule = *operand_rule >> e_ref([&operandTrees](str_it begin, str_it end)
 	{
 		std::string matched_str(begin, end);
+		if (matched_str.size() == 0) return;
 		operandTrees.push_back(generateTree<offset + 1 < std::tuple_size<decltype(operationRules)>::value ? offset + 1 : 0>(matched_str));
 	});
 
@@ -173,7 +178,6 @@ namespace PropositionalParser
 	ExprTree* parse(const std::string& expr)
 	{
 		initUnaryExpr();
-
 		return generateTree(expr);
 	}
 }

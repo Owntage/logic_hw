@@ -7,6 +7,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "propositional_parser.h"
+
 typedef std::string::iterator str_it;
 
 using namespace axe;
@@ -28,7 +30,7 @@ void parsePropositionalInput(
 	auto addition = r_many(multiplication, addOperations);
 	auto implication = r_many(addition, implOperations);
 
-	unary_expr = *(r_char('!')) & variable | ("(" & implication & ")");
+	unary_expr = variable | ("!" & implication) | ("(" & implication & ")");
 
 	auto assumptionExpr = implication >> e_push_back(assumptions);
 
@@ -44,6 +46,9 @@ void parsePropositionalInput(
 		if (implication(line.begin(), line.end()).matched)
 		{
 			proofExpressions.push_back(line);
+		} else
+		{
+			cout << "failed to match string: \"" << line << "\"" << endl;
 		}
 	}
 
