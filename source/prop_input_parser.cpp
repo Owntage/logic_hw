@@ -4,10 +4,13 @@
 
 #include "prop_input_parser.h"
 #include <axe.h>
+#include <sstream>
+#include <iostream>
 
 typedef std::string::iterator str_it;
 
 using namespace axe;
+using namespace std;
 
 void parsePropositionalInput(
 		std::string& input,
@@ -28,12 +31,22 @@ void parsePropositionalInput(
 	unary_expr = *(r_char('!')) & variable | ("(" & implication & ")");
 
 	auto assumptionExpr = implication >> e_push_back(assumptions);
-	auto proofExpr = implication >> e_push_back(proofExpressions);
-	auto header = ~(assumptionExpr & *("," & assumptionExpr)) & r_str("|-") & (implication >> targetExpr);
-	auto proof = *(proofExpr & "\n");
-	auto inputGrammar = header & "\n" & proof;
 
-	inputGrammar(input.begin(), input.end());
+	auto header = ~(assumptionExpr & *("," & assumptionExpr)) & r_str("|-") & (implication >> targetExpr);
+
+	str_it inputIterator = header(input.begin(), input.end()).position + 1;
+	input = input.substr(inputIterator - input.begin());
+	std::stringstream inputStream(input);
+	while (!inputStream.eof())
+	{
+		std::string line;
+		std::getline(inputStream, line);
+		if (implication(line.begin(), line.end()).matched)
+		{
+			proofExpressions.push_back(line);
+		}
+	}
+
 }
 
 
