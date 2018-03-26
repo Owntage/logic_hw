@@ -4,8 +4,12 @@
 
 #include "propositional_parser.h"
 #include "propositional_proof.h"
-#include <vector>
 #include <iostream>
+#include <unordered_map>
+#include <utility>
+#include <sstream>
+
+using namespace std;
 
 bool checkAxiom1(ExprTree* expr)
 {
@@ -192,6 +196,52 @@ int getAxiom(ExprTree* expr)
 	return -1;
 }
 
+struct Memorization
+{
+	Memorization(vector<ExprTree*>& exprTrees) :
+			exprTrees(exprTrees)
+	{}
+
+	pair<int, int> getMP(int i)
+	{
+		stringstream s;
+		s << *exprTrees[i];
+		string exprStr = s.str();
+		if (memorization.find(exprStr) != memorization.end())
+		{
+			return memorization[exprStr];
+		}
+		bool mpFound = false;
+		int mpI = -1;
+		int mpJ = -1;
+		for (int j = 0; j < i; j++)
+		{
+			for (int k = 0; k < i; k++)
+			{
+				if (mpFound) break;
+				if (exprTrees[j]->value == "->")
+				{
+					if (*exprTrees[j]->left == *exprTrees[k] && *exprTrees[j]->right == *exprTrees[i])
+					{
+						mpFound = true;
+						mpI = k;
+						mpJ = j;
+					}
+				}
+			}
+			if (mpFound) break;
+		}
+		if (mpFound)
+		{
+			memorization[exprStr] = make_pair(mpI, mpJ);
+		}
+		return make_pair(mpI, mpJ);
+	};
+private:
+	vector<ExprTree*>& exprTrees;
+	unordered_map<string, pair<int, int> > memorization;
+};
+
 PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> assumptions,
 													 std::vector<std::string> expressions)
 {
@@ -206,6 +256,8 @@ PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> as
 	{
 		exprTrees.push_back(PropositionalParser::parse(expressions[i]));
 	}
+
+	Memorization memorization(exprTrees);
 
 	result.resize(expressions.size());
 	for (int i = 0; i < exprTrees.size(); i++)
@@ -224,32 +276,14 @@ PropositionalProofChecker::PropositionalProofChecker(std::vector<std::string> as
 			continue;
 		}
 
-		bool mpFound = false;
-		int mpI;
-		int mpJ;
-		for (int j = 0; j < i; j++)
-		{
-			for (int k = 0; k < i; k++)
-			{
-				if (mpFound) continue;
-				if (exprTrees[j]->value == "->")
-				{
-					if (*exprTrees[j]->left == *exprTrees[k] && *exprTrees[j]->right == *exprTrees[i])
-					{
-						mpFound = true;
-						mpI = k;
-						mpJ = j;
-					}
-				}
-			}
-		}
+		auto mp = memorization.getMP(i);
 
-		if (mpFound)
+		if (mp.first != -1)
 		{
 			//result[i] = "M.P. " + std::to_string(mpI + 1) + " " + std::to_string(mpJ + 1);
 			result[i][EXPR_TYPE_KEY] = EXPR_MP;
-			result[i][EXPR_MP_FIRST] = mpI + 1;
-			result[i][EXPR_MP_SECOND] = mpJ + 1;
+			result[i][EXPR_MP_FIRST] = mp.first + 1;
+			result[i][EXPR_MP_SECOND] = mp.second + 1;
 			continue;
 		}
 
