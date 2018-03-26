@@ -9,7 +9,8 @@ add_definitions(-std=c++11 -g)
 add_library(common
         ${PROJECT_SOURCE_DIR}/source/propositional_parser.cpp
         ${PROJECT_SOURCE_DIR}/source/propositional_proof.cpp
-        ${PROJECT_SOURCE_DIR}/source/prop_input_parser.cpp)
+        ${PROJECT_SOURCE_DIR}/source/prop_input_parser.cpp
+        ${PROJECT_SOURCE_DIR}/source/deduction.cpp)
 
 add_executable(hw1 ${PROJECT_SOURCE_DIR}/source/hw1.cpp)
 add_executable(hw2 ${PROJECT_SOURCE_DIR}/source/hw2.cpp)
