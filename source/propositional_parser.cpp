@@ -54,7 +54,7 @@ void initUnaryExpr()
 {
 	static bool isInitiated = false;
 	if (isInitiated) return;
-	unary_expr = variable | ("!" & implication) | ("(" & implication & ")");
+	unary_expr = variable | (r_str("!(") & implication & ")") | ("(" & implication & ")") | (*r_str("!") & variable);
 	isInitiated = true;
 }
 
@@ -72,17 +72,18 @@ ExprTree* generateBaseLevelTree(std::string input)
 	auto exprRule = r_many(operandRule, operationExtractorRule);
 	exprRule(input.begin(), input.end());
 	std::vector<ExprTree*> resultTrees;
+
 	for(int i = 0; i < operands.size(); i++)
 	{
 		if (operands[i][0] == '(')
 		{
-			resultTrees.push_back(generateTree<0>(input.substr(1, input.size() - 1)));
+			resultTrees.push_back(generateTree<0>(operands[i].substr(1, operands[i].size() - 2)));
 		}
 		else
 		{
 			if (operands[i][0] == '!')
 			{
-				resultTrees.push_back(new ExprTree("!", generateTree<0>(input.substr(1)), nullptr));
+				resultTrees.push_back(new ExprTree("!", generateTree<0>(operands[i].substr(1)), nullptr));
 			}
 			else
 			{

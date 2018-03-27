@@ -41,11 +41,8 @@ int main()
 	if (!compareExpressionTrees()) return 1;
 	if (!checkGeneratedTree()) return 1;
 
-	//ExprTree* tree = PropositionalParser::parse("((A->C)->C)->((A->C)->(!C))->!(A->C)");
-	//std::cout << "parsed tree: " << *tree << std::endl;
-
-	ExprTree* tree2 = PropositionalParser::parse("(((A->C)->C)->(((A->C)->(!C))->(!(A->C))))");
-	std::cout << "parsed tree: " << *tree2 << std::endl;
-
+	ExprTree* tree = PropositionalParser::parse("(!A->!B)->(!A->!!B)->(!!A)");
+	std::cout << "parsed tree: " << *tree << std::endl;
+	std::cout << "axiom: " << getAxiom(tree) << std::endl;
 	return 0;
 }
