@@ -20,4 +20,5 @@ add_executable(tests ${PROJECT_SOURCE_DIR}/source/tests.cpp)
 
 target_link_libraries(hw1 common)
 target_link_libraries(hw2 common)
+target_link_libraries(hw3 common)
 target_link_libraries(tests common)

@@ -17,7 +17,7 @@ static std::string neg(const std::string &expr)
 	return "!(" + expr + ")";
 }
 
-static std::string impl(const std::string &expr1, const std::string &expr2)
+static std::string impl(std::string expr1, std::string expr2)
 {
 	return "(" + expr1 + ")->(" + expr2 + ")";
 }
@@ -37,7 +37,7 @@ static void operator<<(vector<T> &v1, const vector<T> &v2)
 {
 	for (int i = 0; i < v2.size(); i++)
 	{
-		v1.push_back(v2);
+		v1.push_back(v2[i]);
 	}
 }
 
@@ -94,10 +94,10 @@ vector<string> aOrNotA(string a)
 
 vector<string> counterPosition(string a, string b)
 {
-	vector<string> impl;
+	vector<string> implVec;
 	vector<string> proof;
-	impl.push_back((impl(a, b)));
-	vector<string> copy(impl);
+	implVec.push_back(impl(a, b));
+	vector<string> copy(implVec);
 	copy.push_back((neg(b)));
 
 	proof.push_back((impl(
@@ -117,7 +117,7 @@ vector<string> counterPosition(string a, string b)
 	proof.push_back((impl(a, neg(b))));
 	proof.push_back((neg(a)));
 
-	return buildDeductiveProof(impl, buildDeductiveProof(copy, proof));
+	return buildDeductiveProof(implVec, buildDeductiveProof(copy, proof));
 }
 
 vector<string> aEnd(string v)
@@ -187,8 +187,6 @@ vector<val_map> generateValues(vector<string>& variables, int offset = 0)
 	return result;
 };
 
-
-
 int main()
 {
 	string input_filename;
@@ -197,6 +195,42 @@ int main()
 	cin >> input_filename;
 	cout << "enter output filename: " << endl;
 	cin >> output_filename;
+
+	ifstream input_f(input_filename);
+	ofstream output_f(output_filename);
+
+	getline(input_f, statement);
+
+	ExprTree* inputTree = PropositionalParser::parse(statement);
+	set<string> variables;
+	extractVariables(inputTree, variables);
+	vector<string> variablesVec(variables.begin(), variables.end());
+	vector<val_map> values = generateValues(variablesVec);
+
+	for (int i = 0; i < values.size(); i++)
+	{
+		if (!inputTree->isTrueOn(values[i]))
+		{
+			output_f << u8"Высказывание ложно при ";
+			for (auto var_it = values[i].begin(); var_it != values[i].end(); var_it++)
+			{
+				if (var_it != values[i].begin())
+				{
+					output_f << ", ";
+				}
+				output_f << var_it->first << "=";
+				if (var_it->second)
+				{
+					output_f << u8"И";
+				}
+				else
+				{
+					output_f << u8"Л";
+				}
+			}
+		}
+	}
+
 
 	return 0;
 }

@@ -30,6 +30,15 @@ static std::string impl(const std::string &expr1, const std::string &expr2)
 	return "(" + expr1 + ")->(" + expr2 + ")";
 }
 
+template<typename T>
+static void operator<<(vector<T> &v1, const vector<T> &v2)
+{
+	for (int i = 0; i < v2.size(); i++)
+	{
+		v1.push_back(v2[i]);
+	}
+}
+
 vector<string> proveNotFirstNotSecondImplication(string, string);
 
 std::vector<std::string> proveImplication(ExprTree *target, const std::map<std::string, bool> &values)
@@ -134,14 +143,7 @@ void printAToA(vector<string> &list, string target)
 	list.push_back(impl(target, target));
 }
 
-template<typename T>
-static void operator<<(vector<T> &v1, const vector<T> &v2)
-{
-	for (int i = 0; i < v2.size(); i++)
-	{
-		v1.push_back(v2);
-	}
-}
+
 
 std::vector<std::string> proveNotFirstNotSecondImplication(string first, string second)
 {
