@@ -187,6 +187,46 @@ vector<val_map> generateValues(vector<string>& variables, int offset = 0)
 	return result;
 };
 
+void getOperatorExpressions(ExprTree* expr, vector<ExprTree*>& output)
+{
+	if (expr->value == "&" || expr->value == "|" | expr->value == "->")
+	{
+		getOperatorExpressions(expr->left, output);
+		getOperatorExpressions(expr->right, output);
+		output.push_back(expr);
+		return;
+	}
+	if (expr->value == "!")
+	{
+		getOperatorExpressions(expr->left, output);
+		output.push_back(expr);
+	}
+}
+
+vector<string> getBaseProof(vector<string> targets, val_map values)
+{
+	set<string> proved;
+	vector<string> proof;
+	for (int i = 0; i < targets.size(); i++)
+	{
+		if (proved.count(targets[i]) == 0)
+		{
+			proof << ProofBuilder::prove(PropositionalParser::parse(targets[i]), values);
+			proved.insert(targets[i]);
+		}
+	}
+	return proof;
+}
+
+
+
+template<typename Stream>
+void buildProof(Stream& s)
+{
+	s << "|-" << statement << "\n";
+	//todo: print proof here
+}
+
 int main()
 {
 	string input_filename;
