@@ -35,11 +35,30 @@ bool checkGeneratedTree()
 	return true;
 }
 
+bool isTrueOnTest(std::string expr, std::map<std::string, bool> values, bool expected)
+{
+	ExprTree* exprTree = PropositionalParser::parse(expr);
+	return exprTree->isTrueOn(values) == expected;
+}
+
+bool isTrueOnTests()
+{
+	bool res = true;
+	res |= isTrueOnTest("A&!B", {{"A", true}, {"B", false}}, true);
+	res |= isTrueOnTest("A->(B->A)", {{"A", true}, {"B", false}}, true);
+	res |= isTrueOnTest("A->(B->A)", {{"A", false}, {"B", false}}, true);
+	res |= isTrueOnTest("A|!B", {{"A", false}, {"B", false}}, true);
+	res |= isTrueOnTest("A->B", {{"A", true}, {"B", false}}, false);
+	res |= isTrueOnTest("(!A->!B)->(!A->!!B)->(!!A)", {{"A", false}, {"B", false}}, true);
+	return res;
+}
+
 
 int main()
 {
 	if (!compareExpressionTrees()) return 1;
 	if (!checkGeneratedTree()) return 1;
+	if (!isTrueOnTests()) return 1;
 
 	ExprTree* tree = PropositionalParser::parse("(!A->!B)->(!A->!!B)->(!!A)");
 	std::cout << "parsed tree: " << *tree << std::endl;

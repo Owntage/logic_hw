@@ -11,6 +11,33 @@ using namespace axe;
 
 typedef std::string::iterator str_it;
 
+bool ExprTree::isTrueOn(const std::map<std::string, bool>& values)
+{
+	if (value == "&")
+	{
+		return left->isTrueOn(values) & right->isTrueOn(values);
+	}
+	if (value == "|")
+	{
+		return left->isTrueOn(values) | right->isTrueOn(values);
+	}
+	if (value == "->")
+	{
+		return !left->isTrueOn(values) | right->isTrueOn(values);
+	}
+	if (value == "!")
+	{
+		return !left->isTrueOn(values);
+	}
+
+	if (values.find(value) == values.end())
+	{
+		std::cout << "ExprTree.isTrueOn(): no value provided for the variable " << value << std::endl;
+		return false;
+	}
+	return values.at(value);
+}
+
 bool ExprTree::operator==(const ExprTree& other)
 {
 	if (this->value != other.value) return false;

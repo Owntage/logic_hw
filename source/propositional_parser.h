@@ -6,6 +6,7 @@
 #define MATH_LOGIC_HW_PROPOSITIONAL_PARSER_H
 
 #include <string>
+#include <map>
 
 #define UNARY_EXPR_DEF variable | (*r_str("!") & "(" & implication & ")") | ("(" & implication & ")") | (*r_str("!") & variable)
 
@@ -26,6 +27,8 @@ struct ExprTree
 			left(left),
 			right(right)
 	{}
+
+	bool isTrueOn(const std::map<std::string, bool>& values);
 
 	bool operator==(const ExprTree& other);
 
