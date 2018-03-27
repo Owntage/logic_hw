@@ -135,7 +135,7 @@ void printAToA(vector<string> &list, string target)
 }
 
 template<typename T>
-void operator<<(vector<T> &v1, const vector<T> &v2)
+static void operator<<(vector<T> &v1, const vector<T> &v2)
 {
 	for (int i = 0; i < v2.size(); i++)
 	{

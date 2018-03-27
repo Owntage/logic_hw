@@ -29,7 +29,65 @@ static std::string disj(const std::string &expr1, const std::string &expr2)
 	return "(" + expr1 + ")|(" + expr2 + ")";
 }
 
+template<typename T>
+static void operator<<(vector<T> &v1, const vector<T> &v2)
+{
+	for (int i = 0; i < v2.size(); i++)
+	{
+		v1.push_back(v2);
+	}
+}
+
 string statement;
+
+vector<string> counterPosition(string, string);
+
+vector<string> aOrNotA(string a)
+{
+	vector<string> proof;
+
+	proof.push_back((impl(
+			a,
+			disj(a, neg(a)))));
+	proof << (counterPosition((a), (disj(a, neg(a)))));
+	proof.push_back((impl(
+			neg(disj(a, neg(a))),
+			neg(a))
+	));
+	proof.push_back((impl(
+			neg(a),
+			disj(a, neg(a)))
+	));
+	proof << (counterPosition((neg(a)), (disj(a, neg(a)))));
+	proof.push_back((impl(
+			neg(disj(a, neg(a))),
+			neg(neg(a)))
+	));
+	proof.push_back((impl(
+			impl(
+					neg(disj(a, neg(a))),
+					neg(a)),
+			impl(
+					impl(
+							neg(disj(a, neg(a))),
+							neg(neg(a))),
+					neg(neg(disj(a, neg(a))))
+			)
+	)));
+	proof.push_back((impl(
+			impl(
+					neg(disj(a, neg(a))),
+					neg(neg(a))),
+			neg(neg(disj(a, neg(a))))
+	)));
+	proof.push_back((neg(neg(disj(a, neg(a))))));
+	proof.push_back((impl(
+			neg(neg(disj(a, neg(a)))),
+			disj(a, neg(a))
+	)));
+	proof.push_back((disj(a, neg(a))));
+	return proof;
+}
 
 vector<string> counterPosition(string a, string b)
 {
