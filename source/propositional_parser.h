@@ -7,6 +7,8 @@
 
 #include <string>
 
+#define UNARY_EXPR_DEF variable | (*r_str("!") & "(" & implication & ")") | ("(" & implication & ")") | (*r_str("!") & variable)
+
 struct ExprTree
 {
 	std::string value;

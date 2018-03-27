@@ -30,7 +30,7 @@ void parsePropositionalInput(
 	auto addition = r_many(multiplication, addOperations);
 	auto implication = r_many(addition, implOperations);
 
-	unary_expr = variable | ("!" & implication) | ("(" & implication & ")");
+	unary_expr = UNARY_EXPR_DEF;
 
 	auto assumptionExpr = implication >> e_push_back(assumptions);
 

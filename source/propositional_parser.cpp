@@ -54,7 +54,7 @@ void initUnaryExpr()
 {
 	static bool isInitiated = false;
 	if (isInitiated) return;
-	unary_expr = variable | (r_str("!(") & implication & ")") | ("(" & implication & ")") | (*r_str("!") & variable);
+	unary_expr = UNARY_EXPR_DEF;
 	isInitiated = true;
 }
 
