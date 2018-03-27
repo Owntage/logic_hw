@@ -15,6 +15,7 @@ add_library(common
 
 add_executable(hw1 ${PROJECT_SOURCE_DIR}/source/hw1.cpp)
 add_executable(hw2 ${PROJECT_SOURCE_DIR}/source/hw2.cpp)
+add_executable(hw3 ${PROJECT_SOURCE_DIR}/source/hw3.cpp)
 add_executable(tests ${PROJECT_SOURCE_DIR}/source/tests.cpp)
 
 target_link_libraries(hw1 common)
