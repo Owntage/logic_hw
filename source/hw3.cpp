@@ -4,6 +4,9 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <fstream>
+#include <iostream>
 #include "proof_builder.h"
 #include "deduction.h"
 
@@ -147,9 +150,53 @@ vector<string> aEnd(string v)
 	return list;
 }
 
+void extractVariables(ExprTree* expr, set<string>& variables)
+{
+	if (expr->value == "&" || expr->value == "|" || expr->value == "->")
+	{
+		extractVariables(expr->left, variables);
+		extractVariables(expr->right, variables);
+		return;
+	}
+	if (expr->value == "!")
+	{
+		extractVariables(expr->left, variables);
+		return;
+	}
+	variables.insert(expr->value);
+}
+
+typedef map<string, bool> val_map;
+
+vector<val_map> generateValues(vector<string>& variables, int offset = 0)
+{
+	vector<val_map> result;
+	if (offset == variables.size() - 1)
+	{
+		val_map m;
+		m[variables.back()] = true;
+		result.push_back(m);
+		m[variables.back()] = false;
+		result.push_back(m);
+		return result;
+	}
+	result << generateValues(variables, offset + 1);
+	result.back()[variables[offset]] = true;
+	result << generateValues(variables, offset + 1);
+	result.back()[variables[offset]] = false;
+	return result;
+};
+
 
 
 int main()
 {
+	string input_filename;
+	string output_filename;
+	cout << "enter input filename: " << endl;
+	cin >> input_filename;
+	cout << "enter output filename: " << endl;
+	cin >> output_filename;
+
 	return 0;
 }
