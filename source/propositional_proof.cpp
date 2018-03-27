@@ -207,10 +207,10 @@ struct Memorization
 		stringstream s;
 		s << *exprTrees[i];
 		string exprStr = s.str();
-		if (memorization.find(exprStr) != memorization.end())
-		{
-			return memorization[exprStr];
-		}
+		//if (memorization.find(exprStr) != memorization.end())
+		//{
+		//	return memorization[exprStr];
+		//}
 		bool mpFound = false;
 		int mpI = -1;
 		int mpJ = -1;
