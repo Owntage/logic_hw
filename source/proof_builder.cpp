@@ -30,9 +30,63 @@ static std::string impl(const std::string &expr1, const std::string &expr2)
 	return "(" + expr1 + ")->(" + expr2 + ")";
 }
 
+vector<string> proveNotFirstNotSecondImplication(string, string);
+
 std::vector<std::string> proveImplication(ExprTree *target, const std::map<std::string, bool> &values)
 {
-	//todo: finish
+	ExprTree *firstExpr = target->left;
+	ExprTree *secondExpr = target->right;
+	string first = getInfixExpr(firstExpr);
+	string second = getInfixExpr(secondExpr);
+	string targetStr = getInfixExpr(target);
+
+	if (!firstExpr->isTrueOn(values) && !secondExpr->isTrueOn(values) && target->isTrueOn(values))
+	{
+		return proveNotFirstNotSecondImplication(first, second);
+	}
+
+	vector<string> list;
+	if (firstExpr->isTrueOn(values) && !secondExpr->isTrueOn(values) && !target->isTrueOn(values))
+	{
+		list.push_back((first));
+		list.push_back((neg(second)));
+		list.push_back((impl(
+				neg(second),
+				impl(targetStr, neg(second))
+		)));
+		list.push_back((neg(second)));
+		list.push_back((impl(targetStr, neg(second))));
+
+		vector<string> deductionAssumptions;
+		vector<string> deductionProof;
+
+		deductionAssumptions.push_back((first));
+		deductionAssumptions.push_back((neg(second)));
+		deductionAssumptions.push_back(targetStr);
+		deductionProof.push_back((first));
+		deductionProof.push_back(targetStr);
+		deductionProof.push_back((second));
+		list << (buildDeductiveProof(deductionAssumptions, deductionProof));
+
+		list.push_back((impl(
+				impl(targetStr, second),
+				impl(
+						impl(targetStr, neg(second)),
+						neg(targetStr)
+				)
+		)));
+		list.push_back((impl(
+				impl(targetStr, neg(second)),
+				neg(targetStr)
+		)));
+		list.push_back((neg(targetStr)));
+		return list;
+	}
+
+	list.push_back((second));
+	list.push_back((impl(second, targetStr)));
+	list.push_back(targetStr);
+	return list;
 }
 
 void printAToA(vector<string> &list, string target)
@@ -91,7 +145,43 @@ void operator<<(vector<T> &v1, const vector<T> &v2)
 
 std::vector<std::string> proveNotFirstNotSecondImplication(string first, string second)
 {
-	//todo: finish
+	vector<string> deductionAssumptions;
+	vector<string> deductionProof;
+
+	deductionAssumptions.push_back((neg(first)));
+	deductionAssumptions.push_back((neg(second)));
+	deductionAssumptions.push_back((first));
+
+	deductionProof.push_back((impl(
+			impl(neg(second), first),
+			impl(
+					impl(neg(second), neg(first)),
+					neg(neg(second))
+			)
+	)));
+	deductionProof.push_back((first));
+	deductionProof.push_back((impl(
+			first,
+			impl(neg(second), first))));
+	deductionProof.push_back((impl(neg(second), first)));
+	deductionProof.push_back((impl(
+			impl(
+					neg(second),
+					neg(first)
+			),
+			neg(neg(second))
+	)));
+	deductionProof.push_back((neg(first)));
+	deductionProof.push_back((impl(
+			neg(first),
+			impl(neg(second), neg(first))
+	)));
+	deductionProof.push_back((impl(neg(second), neg(first))));
+	deductionProof.push_back((neg(neg(second))));
+	deductionProof.push_back((impl(neg(neg(second)), second)));
+	deductionProof.push_back((second));
+
+	return buildDeductiveProof(deductionAssumptions, deductionProof);
 }
 
 std::vector<std::string> proveDisjunction(ExprTree *target, const std::map<std::string, bool> &values)
@@ -176,12 +266,113 @@ std::vector<std::string> proveDisjunction(ExprTree *target, const std::map<std::
 
 std::vector<std::string> proveConjunction(ExprTree *target, const std::map<std::string, bool> &values)
 {
-	//todo: finish
+	ExprTree *firstExpr = target->left;
+	ExprTree *secondExpr = target->right;
+	string first = getInfixExpr(firstExpr);
+	string second = getInfixExpr(secondExpr);
+	string targetStr = getInfixExpr(target);
+	string mainVariable;
+
+	vector<string> list;
+	if (firstExpr->isTrueOn(values) && secondExpr->isTrueOn(values) && target->isTrueOn(values))
+	{
+		list.push_back((first));
+		list.push_back((second));
+		list.push_back((impl(
+				first,
+				impl(second, targetStr)
+		)));
+		list.push_back((impl(second, targetStr)));
+		list.push_back(targetStr);
+		return list;
+	}
+	if (firstExpr->isTrueOn(values) && !secondExpr->isTrueOn(values) && !target->isTrueOn(values))
+		mainVariable = second;
+	else
+		mainVariable = first;
+	list.push_back((neg(mainVariable)));
+	list.push_back((impl(
+			impl(targetStr, mainVariable),
+			impl(
+					impl(targetStr, neg(mainVariable)),
+					neg(targetStr))
+	)));
+	list.push_back((impl(targetStr, mainVariable)));
+	list.push_back((impl(
+			impl(targetStr, neg(mainVariable)),
+			neg(targetStr)
+	)));
+	list.push_back((impl(
+			neg(mainVariable),
+			impl(targetStr, neg(mainVariable))
+	)));
+	list.push_back((impl(targetStr, neg(mainVariable))));
+	list.push_back((neg(targetStr)));
+	return list;
 }
 
 std::vector<std::string> proveNegation(ExprTree *target, const std::map<std::string, bool> &values)
 {
-	//todo: finish
+	ExprTree *firstExpr = target->left;
+	string first = getInfixExpr(firstExpr);
+	string targetStr = getInfixExpr(target);
+
+	vector<string> list;
+	if (!firstExpr->isTrueOn(values) && target->isTrueOn(values))
+		list.push_back(targetStr);
+	else
+	{
+		list.push_back((first));
+		list.push_back((impl(first, impl(neg(first), first))));
+		list.push_back((impl(neg(first), first)));
+		list.push_back((impl(
+				neg(first),
+				impl(neg(first), neg(first)))));
+		list.push_back((impl(
+				impl(neg(first), impl(neg(first), neg(first))),
+				impl(
+						impl(
+								neg(first),
+								impl(
+										impl(neg(first), neg(first)),
+										neg(first)
+								)
+						),
+						impl(neg(first), neg(first))
+				)
+		)));
+		list.push_back((impl(
+				impl(
+						neg(first),
+						impl(
+								impl(neg(first), neg(first)),
+								neg(first)
+						)
+				),
+				impl(neg(first), neg(first))
+		)));
+		list.push_back((impl(
+				neg(first),
+				impl(
+						impl(neg(first), neg(first)),
+						neg(first)
+				)
+		)));
+		list.push_back((impl(neg(first), neg(first))));
+		list.push_back((impl(
+				impl(neg(first), first),
+				impl(
+						impl(neg(first), neg(first)),
+						neg(neg(first))
+				)
+		)));
+		list.push_back((impl(
+				impl(neg(first), neg(first)),
+				neg(neg(first))
+		)));
+		list.push_back((neg(neg(first))));
+	}
+	return list;
 }
 
 std::vector<std::string> prove(ExprTree *target, const std::map<std::string, bool> &values)
