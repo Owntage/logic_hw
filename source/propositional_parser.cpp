@@ -4,7 +4,7 @@
 
 #include<axe.h>
 #include<stack>
-#include <c++/iostream>
+#include <iostream>
 #include "propositional_parser.h"
 
 using namespace axe;
