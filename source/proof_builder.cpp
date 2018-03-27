@@ -375,12 +375,15 @@ std::vector<std::string> proveNegation(ExprTree *target, const std::map<std::str
 	return list;
 }
 
-std::vector<std::string> prove(ExprTree *target, const std::map<std::string, bool> &values)
+namespace ProofBuilder
 {
-	if (target->value == "!") return proveNegation(target, values);
-	if (target->value == "&") return proveConjunction(target, values);
-	if (target->value == "|") return proveDisjunction(target, values);
-	if (target->value == "->") return proveImplication(target, values);
-	std::vector<std::string> empty;
-	return empty;
+	std::vector<std::string> prove(ExprTree *target, const std::map<std::string, bool> &values)
+	{
+		if (target->value == "!") return proveNegation(target, values);
+		if (target->value == "&") return proveConjunction(target, values);
+		if (target->value == "|") return proveDisjunction(target, values);
+		if (target->value == "->") return proveImplication(target, values);
+		std::vector<std::string> empty;
+		return empty;
+	}
 }
