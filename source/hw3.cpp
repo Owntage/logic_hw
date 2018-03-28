@@ -54,6 +54,19 @@ static void operator<<(vector<T> &v1, const vector<T> &v2)
 	}
 }
 
+template<>
+void operator<< <std::string>(vector<std::string>& v1, const vector<std::string>& v2)
+{
+	for (int i = 0; i < v2.size(); i++)
+	{
+		v1.push_back(v2[i]);
+		//if (v1.size() == 67)
+		//{
+		//	std::cout << "here it is!: " << v1.back() << std::endl;
+		//}
+	}
+}
+
 string statement;
 
 vector<string> counterPosition(string, string);
@@ -265,13 +278,12 @@ vector<string> getProof(vector<string> variables, vector<string> assumptions)
 		variables.erase(variables.begin());
 		vector<string> list;
 		vector<string> copy(assumptions);
-		vector<string> variablesCopy(variables);
-		assumptions.push_back(variables[0]);
-		copy.push_back("!" + variables[0]);
+		assumptions.push_back(v);
+		copy.push_back("!(" + v + ")");
 		vector<string> trueCopy(assumptions);
 		vector<string> notTrueCopy(copy);
 		list << (buildDeductiveProof(assumptions, getProof(variables, trueCopy)));
-		list << (buildDeductiveProof(copy, getProof(variablesCopy, notTrueCopy)));
+		list << (buildDeductiveProof(copy, getProof(variables, notTrueCopy)));
 		list << (aOrNotA(v));
 		list << (aEnd(v));
 		return list;
@@ -282,10 +294,15 @@ vector<string> getProof(vector<string> variables, vector<string> assumptions)
 }
 
 template<typename Stream>
-void buildProof(Stream& s)
+void buildProof(Stream& s, vector<string> variablesVec)
 {
 	s << "|-" << statement << "\n";
-	//todo: print proof here
+	vector<string> emptyAssumptions;
+	vector<string> proof = getProof(variablesVec, emptyAssumptions);
+	for (int i = 0; i < proof.size(); i++)
+	{
+		s << proof[i] << endl;
+	}
 }
 
 int main()
@@ -329,8 +346,11 @@ int main()
 					output_f << u8"Л";
 				}
 			}
+			return 0;
 		}
 	}
+
+	buildProof(output_f, variablesVec);
 
 
 	return 0;

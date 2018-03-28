@@ -54,16 +54,15 @@ void printForAxiomOrAssump(vector<string>& proof, const string& expr, const stri
 {
 	printAxiom1(proof, expr, targetExpr);
 	proof << expr;
-	proof << targetExpr << "->" << expr;
+	proof << implStr(targetExpr, expr);
 }
 
 void printForTarget(vector<string>& proof, const string& expr, const string& t)
 {
 	printAxiom1(proof, t, t);
-	string impl = t + "->" + t;
-	printAxiom1(proof, t, impl);
-	printAxiom2(proof, t, impl, t);
-	proof << "(" << t << "->(" << implStr(t, t) << ")->" << t << ")->(" << implStr(t, t) << ")";
+	printAxiom1(proof, t, implStr(t, t));
+	printAxiom2(proof, t, implStr(t, t), t);
+	proof << "(" << brackets(t) << "->(" << implStr(t, t) << ")->" << brackets(t) << ")->(" << implStr(t, t) << ")";
 	proof << implStr(t, t);
 }
 
@@ -85,7 +84,7 @@ std::vector<std::string> buildDeductiveProof(
 
 	for (int i = 0; i < proofExpressions.size(); i++)
 	{
-		if (assumptions.back() == proofExpressions[i])
+		if (*PropositionalParser::parse(assumptions.back()) == *PropositionalParser::parse(proofExpressions[i]))
 		{
 			printForTarget(proof, proofExpressions[i], assumptions.back());
 			continue;
