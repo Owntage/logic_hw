@@ -32,6 +32,19 @@ static std::string disj(const std::string &expr1, const std::string &expr2)
 	return "(" + expr1 + ")|(" + expr2 + ")";
 }
 
+static std::string getInfixExpr(ExprTree *tree)
+{
+	if (tree->value == "!")
+	{
+		return "!(" + getInfixExpr(tree->left) + ")";
+	}
+	if (tree->left != nullptr && tree->right != nullptr)
+	{
+		return "(" + getInfixExpr(tree->left) + ")" + tree->value + "(" + getInfixExpr(tree->right) + ")";
+	}
+	return tree->value;
+}
+
 template<typename T>
 static void operator<<(vector<T> &v1, const vector<T> &v2)
 {
@@ -218,7 +231,55 @@ vector<string> getBaseProof(vector<string> targets, val_map values)
 	return proof;
 }
 
+vector<string> getBaseProof(vector<ExprTree*> targets, val_map values)
+{
+	vector<string> strings;
+	for (int i = 0; i < targets.size(); i++)
+	{
+		strings.push_back(getInfixExpr(targets[i]));
+	}
+	return getBaseProof(strings, values);
+}
 
+val_map getValues(vector<string> assumptions)
+{
+	val_map result;
+	for (int i = 0; i < assumptions.size(); i++)
+	{
+		if (assumptions[i][0] == '!')
+		{
+			result[assumptions[i].substr(1)] = false;
+		}
+		else
+		{
+			result[assumptions[i]] = true;
+		}
+	}
+	return result;
+}
+
+vector<string> getProof(vector<string> variables, vector<string> assumptions)
+{
+	if (variables.size() != 0) {
+		string v = variables[0];
+		variables.erase(variables.begin());
+		vector<string> list;
+		vector<string> copy(assumptions);
+		vector<string> variablesCopy(variables);
+		assumptions.push_back(variables[0]);
+		copy.push_back("!" + variables[0]);
+		vector<string> trueCopy(assumptions);
+		vector<string> notTrueCopy(copy);
+		list << (buildDeductiveProof(assumptions, getProof(variables, trueCopy)));
+		list << (buildDeductiveProof(copy, getProof(variablesCopy, notTrueCopy)));
+		list << (aOrNotA(v));
+		list << (aEnd(v));
+		return list;
+	}
+	vector<ExprTree*> insides;
+	getOperatorExpressions(PropositionalParser::parse(statement), insides);
+	return getBaseProof(insides, getValues(assumptions));
+}
 
 template<typename Stream>
 void buildProof(Stream& s)
